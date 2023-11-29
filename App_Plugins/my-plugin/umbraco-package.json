@@ -1,0 +1,20 @@
+{
+  "$schema": "../../umbraco-package-schema.json",
+  "name": "My Package",
+  "version": "0.1.0",
+  "extensions": [
+    {
+      "type": "headerApp",
+      "alias": "My.HeaderApp.Demo",
+      "name": "My HeaderApp Demo",
+      "js": "/App_Plugins/my-dashboard/dist/my-plugin.js",
+      "elementName": "my-element",
+      "kind": "button",
+      "meta": {
+        "icon": "umb:hearts",
+        "label": "My World",
+        "href": "https://umbraco.com"
+      }
+    }
+  ]
+}

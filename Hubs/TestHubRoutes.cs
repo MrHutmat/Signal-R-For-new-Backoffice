@@ -9,7 +9,7 @@ using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Cms.Web.Common.Routing;
 using Umbraco.Extensions;
 
-namespace SignalRProjectSite
+namespace SignalRProjectSite.Hubs
 {
     public class TestHubRoutes : IAreaRoutes
     {

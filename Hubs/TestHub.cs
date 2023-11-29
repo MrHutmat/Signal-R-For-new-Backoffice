@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿
 
-namespace SignalRProjectSite
+namespace SignalRProjectSite.Hubs
 {
-    public class TestHub : Hub<ITestHubEvents>
+    public class TestHub : Hub
     {
         // when a client sends us a ping
         public async Task Ping()
