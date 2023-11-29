@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using SignalRProjectSite.Hubs;
 using Umbraco.Cms.Core.Composing;
@@ -17,15 +16,16 @@ namespace SignalRProjectSite
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            // first we are going to add signalR to the serviceCollection if no hubs have been added yet
-            // this is just in case Umbraco ever decides to use a different technology
-            if (!builder.Services.Any(x => x.ServiceType == typeof(IHubContext<>)))
-            {
-                builder.Services.AddSignalR();
-            }
+
+
+            builder.Services.AddSignalR();
+
+            builder.Services.AddSingleton<TestHubRoutes>();
+
+
 
             // next is adding the routes we defined earlier
-            builder.Services.AddUnique<TestHubRoutes>();
+            //builder.Services.AddUnique<TestHubRoutes>();
             builder.Services.Configure<UmbracoPipelineOptions>(options =>
             {
                 options.AddFilter(new UmbracoPipelineFilter(

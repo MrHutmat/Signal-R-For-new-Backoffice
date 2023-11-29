@@ -7,7 +7,7 @@
       "type": "headerApp",
       "alias": "My.HeaderApp.Demo",
       "name": "My HeaderApp Demo",
-      "js": "/App_Plugins/my-dashboard/dist/my-plugin.js",
+      "js": "/App_Plugins/my-plugin/dist/my-plugin.js",
       "elementName": "my-element",
       "kind": "button",
       "meta": {

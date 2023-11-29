@@ -9,6 +9,7 @@ using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Cms.Web.Common.Routing;
 using Umbraco.Extensions;
 
+
 namespace SignalRProjectSite.Hubs
 {
     public class TestHubRoutes : IAreaRoutes
@@ -21,7 +22,7 @@ namespace SignalRProjectSite.Hubs
 
             //Something about IHostingEnvironment soon no god.
 
-            IHostingEnvironment hostingEnvironment,
+            Umbraco.Cms.Core.Hosting.IHostingEnvironment hostingEnvironment,
             IRuntimeState runtimeState)
         {
             _runtimeState = runtimeState;
