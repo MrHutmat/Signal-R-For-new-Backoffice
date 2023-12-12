@@ -25,22 +25,32 @@ namespace SignalRProjectSite
 
 
             // next is adding the routes we defined earlier
-            //builder.Services.AddUnique<TestHubRoutes>();
+           // builder.Services.AddUnique<TestHubRoutes>();
             builder.Services.Configure<UmbracoPipelineOptions>(options =>
             {
-                options.AddFilter(new UmbracoPipelineFilter(
-                    "test",
-                    applicationBuilder => { },
-                    applicationBuilder => { },
-                    applicationBuilder =>
+                options.AddFilter(new UmbracoPipelineFilter("test")
+                {
+                    Endpoints = app => app.UseEndpoints(endpoints =>
                     {
-                        applicationBuilder.UseEndpoints(e =>
-                        {
-                            var hubRoutes = applicationBuilder.ApplicationServices.GetRequiredService<TestHubRoutes>();
-                            hubRoutes.CreateRoutes(e);
-                        });
-                    }
-                ));
+                        var hubRoutes = app.ApplicationServices.GetRequiredService<TestHubRoutes>();
+                        hubRoutes.CreateRoutes(endpoints);
+                    })
+                });
+
+
+                //options.AddFilter(new UmbracoPipelineFilter(
+                //    "test",
+                //    applicationBuilder => { },
+                //    applicationBuilder => { },
+                //    applicationBuilder =>
+                //    {
+                //        applicationBuilder.UseEndpoints(e =>
+                //        {
+                //            var hubRoutes = applicationBuilder.ApplicationServices.GetRequiredService<TestHubRoutes>();
+                //            hubRoutes.CreateRoutes(e);
+                //        });
+                //    }
+                //));
             });
         }
     }

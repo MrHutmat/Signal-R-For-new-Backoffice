@@ -4,6 +4,18 @@
   "version": "0.1.0",
   "extensions": [
     {
+      "type": "entryPoint",
+      "alias": "SignalR",
+      "name": "Signal R",
+      "js": "/App_Plugins/my-plugin/src/lib/signalr/signalr.js"
+    },
+    {
+      "type": "entryPoint",
+      "alias": "test",
+      "name": "test R",
+      "js": "/App_Plugins/my-plugin/src/lib/signalr/test.js"
+    },
+    {
       "type": "headerApp",
       "alias": "My.HeaderApp.Demo",
       "name": "My HeaderApp Demo",

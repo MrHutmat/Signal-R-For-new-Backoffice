@@ -1,50 +1,64 @@
-import { LitElement, css, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
-import litLogo from './assets/lit.svg'
-import viteLogo from '/vite.svg'
-
+import { LitElement, css, html } from "lit";
+import { customElement, property } from "lit/decorators.js";
 /**
  * An example element.
  *
  * @slot - This element has a slot
  * @csspart button - The button
  */
-@customElement('my-element')
+@customElement("my-element")
 export class MyElement extends LitElement {
   /**
    * Copy for the read the docs hint.
    */
   @property()
-  docsHint = 'Click on the Vite and Lit logos to learn more'
+  docsHint = "Click on the Vite and Lit logos to learn more";
 
   /**
    * The number of times the button has been clicked.
    */
-  @property({ type: Number })
-  count = 0
 
   render() {
     return html`
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src=${viteLogo} class="logo" alt="Vite logo" />
-        </a>
-        <a href="https://lit.dev" target="_blank">
-          <img src=${litLogo} class="logo lit" alt="Lit logo" />
-        </a>
-      </div>
-      <slot></slot>
-      <div class="card">
-        <button @click=${this._onClick} part="button">
-          count is ${this.count}
-        </button>
-      </div>
-      <p class="read-the-docs">${this.docsHint}</p>
-    `
-  }
+      <head>
+        <script>
+          var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/umbraco/testhub")
+            .withAutomaticReconnect()
+            .configureLogging(signalR.LogLevel.Warning)
+            .build();
 
-  private _onClick() {
-    this.count++
+          // register our callbacks when the hub sends us an event
+          connection.on("Pong", function () {
+            console.log("Pong");
+          });
+
+          // start the connection
+          connection
+            .start()
+            .then(function () {
+              console.info("signalR connection established");
+
+              // connection is established => call a function on the hub
+              connection.invoke("Ping").catch(function (err) {
+                return console.error(
+                  "Could not invoke method [Ping] on signalR connection",
+                  err.toString()
+                );
+              });
+            })
+            .catch(function (err) {
+              return console.error(
+                "could not establish a signalR connection",
+                err.toString()
+              );
+            });
+        </script>
+      </head>
+      <div>
+        <p class="read-the-docs">${this.docsHint}</p>
+      </div>
+    `;
   }
 
   static styles = css`
@@ -117,11 +131,11 @@ export class MyElement extends LitElement {
         background-color: #f9f9f9;
       }
     }
-  `
+  `;
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'my-element': MyElement
+    "my-element": MyElement;
   }
 }
