@@ -1,5 +1,5 @@
 import { LitElement, css, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, state } from "lit/decorators.js";
 /**
  * An example element.
  *
@@ -11,8 +11,62 @@ export class MyElement extends LitElement {
   /**
    * Copy for the read the docs hint.
    */
-  @property()
-  docsHint = "Click on the Vite and Lit logos to learn more";
+  @state()
+  _users = 0;
+
+  #connection: any;
+
+  constructor() {
+    super();
+
+    this.#connection = new (window as any).signalR.HubConnectionBuilder()
+      .withUrl("/umbraco/testhub")
+      .withAutomaticReconnect()
+      .configureLogging((window as any).signalR.LogLevel.Warning)
+      .build();
+
+    // this.#connection.on("ReceiveMessage", () => {
+    //   console.log("test");
+    // };
+    this.#connection.on("ReceiveMessage", (message: any) => {
+      console.log(message);
+    });
+
+    this.#connection.on("updateTotalUsers", (message: any) => {
+      console.log(message);
+      this._users = message;
+    });
+
+    this.#connection
+      .start()
+      .then(() => {
+        console.info("signalR connection established");
+        this.#connection.invoke("HelloWorld").catch((err: any) => {
+          return console.error(
+            "Could not invoke method [Ping] on signalR connection",
+            err.toString()
+          );
+        });
+      })
+      .catch((err: any) => {
+        return console.error(
+          "could not establish a signalR connection",
+          err.toString()
+        );
+      });
+  }
+
+  // newWindowLoadedOnClient = () => {
+  //   this.#connection.invoke("ReceiveMessage");
+  //   this._users = 1337;
+  // };
+
+  // accept = () => {
+  //   console.log("New window loaded on client");
+  //   this.newWindowLoadedOnClient();
+  // };
+
+  // reject = () => {};
 
   /**
    * The number of times the button has been clicked.
@@ -20,46 +74,25 @@ export class MyElement extends LitElement {
 
   render() {
     return html`
-      <head>
-        <script>
-          var connection = new signalR.HubConnectionBuilder()
-            .withUrl("/umbraco/testhub")
-            .withAutomaticReconnect()
-            .configureLogging(signalR.LogLevel.Warning)
-            .build();
-
-          // register our callbacks when the hub sends us an event
-          connection.on("Pong", function () {
-            console.log("Pong");
-          });
-
-          // start the connection
-          connection
-            .start()
-            .then(function () {
-              console.info("signalR connection established");
-
-              // connection is established => call a function on the hub
-              connection.invoke("Ping").catch(function (err) {
-                return console.error(
-                  "Could not invoke method [Ping] on signalR connection",
-                  err.toString()
-                );
-              });
-            })
-            .catch(function (err) {
-              return console.error(
-                "could not establish a signalR connection",
-                err.toString()
-              );
-            });
-        </script>
-      </head>
       <div>
-        <p class="read-the-docs">${this.docsHint}</p>
+        <h1>My Element</h1>
+        <p>Open a new window to see the magic happen</p>
+        <p>${this._users}</p>
       </div>
     `;
   }
+
+  // (function () {
+  //   console.info("signalR connection established");
+
+  //   // connection is established => call a function on the hub
+  //   connection.invoke("Ping").catch(function (err) {
+  //     return console.error(
+  //       "Could not invoke method [Ping] on signalR connection",
+  //       err.toString()
+  //     );
+  //   });
+  // })
 
   static styles = css`
     :host {
@@ -139,3 +172,34 @@ declare global {
     "my-element": MyElement;
   }
 }
+
+// this.#connection = new (window as any).signalR.HubConnectionBuilder()
+// .withUrl("/umbraco/testhub")
+// .withAutomaticReconnect()
+// .configureLogging((window as any).signalR.LogLevel.Warning)
+// .build()
+// .start()
+// .then(this.accept, this.reject)
+// .catch(function (err: any) {
+//   return console.error(
+//     "could not establish a signalR connection",
+//     err.toString()
+//   );
+// });
+
+// this.#connection.on("updateUsers", (message: any) => {
+// console.log(message);
+// });
+// }
+
+// newWindowLoadedOnClient() {
+// this.#connection.send("updateUsers");
+// this._users = 1337;
+// }
+
+// accept() {
+// console.log("New window loaded on client");
+// this.newWindowLoadedOnClient();
+// }
+
+// reject() {}

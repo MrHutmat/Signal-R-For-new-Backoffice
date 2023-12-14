@@ -10,18 +10,11 @@
       "js": "/App_Plugins/my-plugin/src/lib/signalr/signalr.js"
     },
     {
-      "type": "entryPoint",
-      "alias": "test",
-      "name": "test R",
-      "js": "/App_Plugins/my-plugin/src/lib/signalr/test.js"
-    },
-    {
       "type": "headerApp",
       "alias": "My.HeaderApp.Demo",
       "name": "My HeaderApp Demo",
       "js": "/App_Plugins/my-plugin/dist/my-plugin.js",
       "elementName": "my-element",
-      "kind": "button",
       "meta": {
         "icon": "umb:hearts",
         "label": "My World",
