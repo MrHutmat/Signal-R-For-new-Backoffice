@@ -1,6 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { MyPopover } from "./popoverelement";
+import { MyPopover } from "./popover-element";
+import { UserCard } from "./usercard-element";
 
 @customElement("my-element")
 export class MyElement extends LitElement {
@@ -56,14 +57,17 @@ export class MyElement extends LitElement {
       </a>
     `;
   }
-
   _handleClick() {
     if (this.#popover) {
       this.#popover.remove();
       this.#popover = null;
     } else {
       const popover = new MyPopover();
+      const userCard = new UserCard();
+  
+      popover.shadowRoot?.appendChild(userCard);
       this.shadowRoot?.appendChild(popover);
+  
       this.#popover = popover;
     }
   }

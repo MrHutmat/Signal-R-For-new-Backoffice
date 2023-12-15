@@ -3,18 +3,19 @@ import { customElement } from "lit/decorators.js";
 
 @customElement("my-popover")
 export class MyPopover extends LitElement {
-  render() {
+
+
+render() {
     return html`
       <div class="popover">
-        <p>Dette er en popover!</p>
-        <p>Her er noget dummy data.</p>
+        <usercard-element></usercard-element>
       </div>
     `;
   }
 
-  _handleClose() {
-    this.remove();
-  }
+_handleClose() {
+  this.remove();
+}
 
   static styles = css`
   .popover {
