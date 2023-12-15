@@ -1,33 +1,23 @@
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-/**
- * An example element.
- *
- * @slot - This element has a slot
- * @csspart button - The button
- */
+import { MyPopover } from "./popoverelement";
+
 @customElement("my-element")
 export class MyElement extends LitElement {
-  /**
-   * Copy for the read the docs hint.
-   */
   @state()
   _users = 0;
 
   #connection: any;
+  #popover: any;
 
   constructor() {
     super();
 
     this.#connection = new (window as any).signalR.HubConnectionBuilder()
-      .withUrl("/umbraco/testhub")
+      .withUrl("/umbraco/UserHub")
       .withAutomaticReconnect()
       .configureLogging((window as any).signalR.LogLevel.Warning)
       .build();
-
-    // this.#connection.on("ReceiveMessage", () => {
-    //   console.log("test");
-    // };
     this.#connection.on("ReceiveMessage", (message: any) => {
       console.log(message);
     });
@@ -56,49 +46,33 @@ export class MyElement extends LitElement {
       });
   }
 
-  // newWindowLoadedOnClient = () => {
-  //   this.#connection.invoke("ReceiveMessage");
-  //   this._users = 1337;
-  // };
-
-  // accept = () => {
-  //   console.log("New window loaded on client");
-  //   this.newWindowLoadedOnClient();
-  // };
-
-  // reject = () => {};
-
-  /**
-   * The number of times the button has been clicked.
-   */
-
   render() {
     return html`
-      <div>
-        <h1>My Element</h1>
-        <p>Open a new window to see the magic happen</p>
+      <a
+        class="circle-container"
+        @click=${this._handleClick}
+      >
         <p>${this._users}</p>
-      </div>
+      </a>
     `;
   }
 
-  // (function () {
-  //   console.info("signalR connection established");
-
-  //   // connection is established => call a function on the hub
-  //   connection.invoke("Ping").catch(function (err) {
-  //     return console.error(
-  //       "Could not invoke method [Ping] on signalR connection",
-  //       err.toString()
-  //     );
-  //   });
-  // })
+  _handleClick() {
+    if (this.#popover) {
+      this.#popover.remove();
+      this.#popover = null;
+    } else {
+      const popover = new MyPopover();
+      this.shadowRoot?.appendChild(popover);
+      this.#popover = popover;
+    }
+  }
 
   static styles = css`
     :host {
       max-width: 1280px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 0;
       text-align: center;
     }
 
@@ -113,6 +87,21 @@ export class MyElement extends LitElement {
     }
     .logo.lit:hover {
       filter: drop-shadow(0 0 2em #325cffaa);
+    }
+    .circle-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: calc(2em + 4px);
+      height: calc(2em + 4px);
+      border-radius: 50%;
+      background-color: #FFFFFF;
+      transition: background-color 0.3s ease;
+    }
+    
+    .circle-container:hover {
+      background-color: #6C6B6A;
+      color: #FFFFFF
     }
 
     .card {
@@ -135,6 +124,12 @@ export class MyElement extends LitElement {
     }
     a:hover {
       color: #535bf2;
+    }
+
+    p {
+      margin: 0;
+      color: #fffff;
+      text-decoration: inherit;
     }
 
     button {
@@ -170,36 +165,6 @@ export class MyElement extends LitElement {
 declare global {
   interface HTMLElementTagNameMap {
     "my-element": MyElement;
+    "my-popover": MyPopover;
   }
 }
-
-// this.#connection = new (window as any).signalR.HubConnectionBuilder()
-// .withUrl("/umbraco/testhub")
-// .withAutomaticReconnect()
-// .configureLogging((window as any).signalR.LogLevel.Warning)
-// .build()
-// .start()
-// .then(this.accept, this.reject)
-// .catch(function (err: any) {
-//   return console.error(
-//     "could not establish a signalR connection",
-//     err.toString()
-//   );
-// });
-
-// this.#connection.on("updateUsers", (message: any) => {
-// console.log(message);
-// });
-// }
-
-// newWindowLoadedOnClient() {
-// this.#connection.send("updateUsers");
-// this._users = 1337;
-// }
-
-// accept() {
-// console.log("New window loaded on client");
-// this.newWindowLoadedOnClient();
-// }
-
-// reject() {}

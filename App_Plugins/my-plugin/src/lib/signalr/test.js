@@ -1,5 +1,5 @@
 var connection = new signalR.HubConnectionBuilder()
-  .withUrl("/umbraco/testhub") // this is the url that we created in the routing `TestHubRoutes.GetTestHubRoute()`
+  .withUrl("/umbraco/userhub") // this is the url that we created in the routing `TestHubRoutes.GetTestHubRoute()`
   .withAutomaticReconnect()
   .configureLogging(signalR.LogLevel.Warning)
   .build();
