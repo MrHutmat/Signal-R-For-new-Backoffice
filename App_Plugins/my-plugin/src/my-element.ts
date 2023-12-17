@@ -5,33 +5,43 @@ import { UserCard } from "./usercard-element";
 
 @customElement("my-element")
 export class MyElement extends LitElement {
+
+  // State variable to track the number of users
   @state()
   _users = 0;
 
+  // Dynamic fields for SignalR connection and popover
   #connection: any;
   #popover: any;
 
   constructor() {
     super();
 
+    // Initialize SignalR connection in the constructor
     this.#connection = new (window as any).signalR.HubConnectionBuilder()
-      .withUrl("/umbraco/UserHub")
+      .withUrl("/umbraco/UserHub") //Hub URL from  UserHubRoutes/GetUserHubRoute
       .withAutomaticReconnect()
       .configureLogging((window as any).signalR.LogLevel.Warning)
       .build();
+
+      // Handle incoming messages from the hub
     this.#connection.on("ReceiveMessage", (message: any) => {
       console.log(message);
     });
 
+    // Handle update of total users from the hub
     this.#connection.on("updateTotalUsers", (message: any) => {
       console.log(message);
       this._users = message;
     });
 
+    // Start the SignalR connection
     this.#connection
       .start()
       .then(() => {
         console.info("signalR connection established");
+
+        // Invoke a method on the hub after connection is established
         this.#connection.invoke("HelloWorld").catch((err: any) => {
           return console.error(
             "Could not invoke method [Ping] on signalR connection",
@@ -47,6 +57,7 @@ export class MyElement extends LitElement {
       });
   }
 
+  // Render method for displaying the user count and creating a clickable container
   render() {
     return html`
       <a
@@ -57,15 +68,22 @@ export class MyElement extends LitElement {
       </a>
     `;
   }
+
+  // Handle click event to toggle the popover
   _handleClick() {
     if (this.#popover) {
       this.#popover.remove();
       this.#popover = null;
     } else {
+
+       // Create instances of popover and user card
       const popover = new MyPopover();
       const userCard = new UserCard();
   
+      // Append the user card to the popover's shadow root
       popover.shadowRoot?.appendChild(userCard);
+
+      // Append the popover to the current element's shadow root
       this.shadowRoot?.appendChild(popover);
   
       this.#popover = popover;
@@ -166,9 +184,9 @@ export class MyElement extends LitElement {
   `;
 }
 
+// Define custom elements for TypeScript when used in HTML. 
 declare global {
   interface HTMLElementTagNameMap {
     "my-element": MyElement;
-    "my-popover": MyPopover;
   }
 }

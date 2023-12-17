@@ -4,6 +4,7 @@ import { customElement } from "lit/decorators.js";
 @customElement("usercard-element")
 export class UserCard extends LitElement {
 
+    // Render method for displaying the user card component
     render() {
         return html`
           <div class="user-card">

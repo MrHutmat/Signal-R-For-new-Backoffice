@@ -4,7 +4,7 @@ import { customElement } from "lit/decorators.js";
 @customElement("my-popover")
 export class MyPopover extends LitElement {
 
-
+// Render method for displaying the popover with a user card element
 render() {
     return html`
       <div class="popover">
@@ -13,6 +13,7 @@ render() {
     `;
   }
 
+  // Handle close method to remove the popover from the DOM
 _handleClose() {
   this.remove();
 }
