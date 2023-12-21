@@ -7,28 +7,21 @@ export class UserCard extends LitElement {
     // Render method for displaying the user card component
     render() {
         return html`
-          <div class="user-card">
-          <div class="profile-picture">J</div>
-          <div class="user-info">
-              <div class="user-name">John Doe</div>
-              <div class="login-info">
-                  <div class="login-date">Last login:</div>
-                  <div class="login-time">Dec 15, 2023 - 12:30 PM</div>
-              </div>
-          </div>
-            </div>
-                <div class="user-card">
-            <div class="profile-picture2">M</div>
-            <div class="user-info">
-                <div class="user-name">Mike Kold</div>
-                <div class="login-info">
+        ${this._connectedUserNames.map(
+            (user: any) => html`
+              <div class="user-card">
+                <div class="profile-picture">${user.profilePicture}</div>
+                <div class="user-info">
+                  <div class="user-name">${user.name}</div>
+                  <div class="login-info">
                     <div class="login-date">Last login:</div>
-                    <div class="login-time">Dec 15, 2023 - 10:35 PM</div>
+                    <div class="login-time">${user.lastLoginDate} - ${user.lastLoginTime}</div>
+                  </div>
                 </div>
-            </div>
-        </div>
-        `;
+              </div>
+            `;
       }
+
       static styles = css`
       .user-card {
         display: flex;

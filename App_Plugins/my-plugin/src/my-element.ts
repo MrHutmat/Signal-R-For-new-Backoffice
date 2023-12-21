@@ -1,14 +1,26 @@
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
+import { UMB_AUTH, UmbLoggedInUser } from "@umbraco-cms/backoffice/auth";
 import { MyPopover } from "./popover-element";
 import { UserCard } from "./usercard-element";
 
 @customElement("my-element")
-export class MyElement extends LitElement {
+export class MyElement extends UmbElementMixin(LitElement) {
 
   // State variable to track the number of users
   @state()
   _users = 0;
+
+  // State variables for the currently logged-in user and authentication type
+  @state()
+  _currentUser?: UmbLoggedInUser;
+  @state()
+  _auth?: typeof UMB_AUTH.TYPE;
+
+  // State variable to store the names of connected users
+  @state()
+  _connectedUserNames: any;
 
   // Dynamic fields for SignalR connection and popover
   #connection: any;
@@ -24,30 +36,47 @@ export class MyElement extends LitElement {
       .configureLogging((window as any).signalR.LogLevel.Warning)
       .build();
 
-      // Handle incoming messages from the hub
-    this.#connection.on("ReceiveMessage", (message: any) => {
-      console.log(message);
+       // Event listener for updating the list of connected users
+     this.#connection.on("updateConnectedUsers", (userNames: any) => {
+      console.log(userNames);
+
+      this._connectedUserNames = userNames;
+      console.log(this._connectedUserNames);
+
+      this.requestUpdate();
     });
 
-    // Handle update of total users from the hub
-    this.#connection.on("updateTotalUsers", (message: any) => {
-      console.log(message);
-      this._users = message;
+     // Event listener for updating the total number of users
+    this.#connection.on("updateTotalUsers", (usersCount: any) => {
+      console.log(usersCount);
+      this._users = usersCount;
+      this.requestUpdate();
     });
 
     // Start the SignalR connection
     this.#connection
       .start()
       .then(() => {
+        console.log(this.#connection.connectionId);
+
+        const userData = {
+          userName: this._currentUser?.name,
+          connectionId: this.#connection.connectionId,
+        };
+
         console.info("signalR connection established");
 
-        // Invoke a method on the hub after connection is established
-        this.#connection.invoke("HelloWorld").catch((err: any) => {
-          return console.error(
-            "Could not invoke method [Ping] on signalR connection",
-            err.toString()
-          );
-        });
+        // Invoke the 'ConnectUser' method on the SignalR connection
+        this.#connection
+          .invoke("ConnectUser", userData.userName, userData.connectionId)
+          .catch((err: any) => {
+            return console.error(
+              "Could not invoke method [Ping] on signalR connection",
+              err.toString()
+            );
+          });
+
+        console.log(this._connectedUserNames);
       })
       .catch((err: any) => {
         return console.error(
@@ -55,6 +84,19 @@ export class MyElement extends LitElement {
           err.toString()
         );
       });
+
+    // Consume the UMB_AUTH context and observe changes to the current user
+    this.consumeContext(UMB_AUTH, (instance) => {
+      this._auth = instance;
+      this._observeCurrentUser();
+    });
+  }
+
+  private async _observeCurrentUser() {
+    if (!this._auth) return;
+    this.observe(this._auth.currentUser, (currentUser) => {
+      this._currentUser = currentUser;
+    });
   }
 
   // Render method for displaying the user count and creating a clickable container
