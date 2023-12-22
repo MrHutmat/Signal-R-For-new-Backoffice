@@ -11,20 +11,20 @@ namespace SignalRProjectSite.Hubs
         public static List<UmbracoUser> ConnectedUserToTheHub { get; } = new List<UmbracoUser>();
 
         // Method invoked when a client connects to the hub
-        public override Task OnConnectedAsync()
+        public override async Task OnConnectedAsync()
         {
             // Increment the count of connected users
             UsersConnected++;
 
             // Notify all clients about the updated total number of users. (Increase the number of users in realtime on front-end)
-            Clients.All.SendAsync("updateTotalUsers", UsersConnected).GetAwaiter().GetResult();
+            await Clients.All.SendAsync("updateTotalUsers", UsersConnected);
 
             // Call the base class implementation. This ensures the connection management goes through
-            return base.OnConnectedAsync();
+            await base.OnConnectedAsync();
         }
 
         // Method invoked when a client disconnects from the hub
-        public override Task OnDisconnectedAsync(Exception? exception)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
             // Decrement the count of connected users
             UsersConnected--;
@@ -43,7 +43,7 @@ namespace SignalRProjectSite.Hubs
             await Clients.All.SendAsync("updateTotalUsers", UsersConnected);
 
             // Call the base class implementation. This ensures the connection management goes through
-            return base.OnDisconnectedAsync(exception);
+            await base.OnDisconnectedAsync(exception);
 
         }
         // Method to connect a user to the hub
@@ -55,8 +55,9 @@ namespace SignalRProjectSite.Hubs
                 var connectedUser = new UmbracoUser
                 {
                     Name = userName,
-                    Id = connectionId
-                };
+                    Id = connectionId,
+                    LastSeen = DateTime.UtcNow.AddHours(1).ToString("HH:mm")
+            };
                 ConnectedUserToTheHub.Add(connectedUser);
 
                 // Notify all clients about the updated list of connected users

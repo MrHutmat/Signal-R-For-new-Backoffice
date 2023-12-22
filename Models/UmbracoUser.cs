@@ -7,4 +7,6 @@ public class UmbracoUser
 
     // Property to store the name of the user
     public string? Name { get; set; }
+
+    public string? LastSeen { get; set; }
 }

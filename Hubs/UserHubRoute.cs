@@ -12,14 +12,14 @@ using Umbraco.Extensions;
 namespace SignalRProjectSite.Hubs
 {
     // Implements IAreaRoutes, responsible for defining routes
-    public class UserHubRoutes : IAreaRoutes
+    public class UserHubRoute : IAreaRoutes
     {
         // Dependency injection for runtime state and Umbraco path segment
         private readonly IRuntimeState _runtimeState;
         private readonly string _umbracoPathSegment;
 
         // Constructor with dependencies
-        public UserHubRoutes(
+        public UserHubRoute(
            
             // IOption is used to access globalSettings (Umbraco MVC Area settings)
             IOptions<GlobalSettings> globalSettings,

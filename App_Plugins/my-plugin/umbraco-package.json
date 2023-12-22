@@ -14,7 +14,7 @@
       "alias": "My.HeaderApp.Demo",
       "name": "My HeaderApp Demo",
       "js": "/App_Plugins/my-plugin/dist/my-plugin.js",
-      "elementName": "my-element",
+      "elementName": "concurrency-element",
       "meta": {
         "icon": "umb:hearts",
         "label": "My World",

@@ -2,15 +2,17 @@ import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
 import { UMB_AUTH, UmbLoggedInUser } from "@umbraco-cms/backoffice/auth";
-import { MyPopover } from "./popover-element";
+import { PopoverElement } from "./popover-element";
 import { UserCard } from "./usercard-element";
 
-@customElement("my-element")
-export class MyElement extends UmbElementMixin(LitElement) {
-
+@customElement("concurrency-element")
+export class ConcurrencyElement extends UmbElementMixin(LitElement) {
   // State variable to track the number of users
   @state()
   _users = 0;
+
+  @state()
+  private _dataReady = false;
 
   // State variables for the currently logged-in user and authentication type
   @state()
@@ -36,17 +38,18 @@ export class MyElement extends UmbElementMixin(LitElement) {
       .configureLogging((window as any).signalR.LogLevel.Warning)
       .build();
 
-       // Event listener for updating the list of connected users
-     this.#connection.on("updateConnectedUsers", (userNames: any) => {
+    // Event listener for updating the list of connected users
+    this.#connection.on("updateConnectedUsers", (userNames: any) => {
       console.log(userNames);
 
       this._connectedUserNames = userNames;
       console.log(this._connectedUserNames);
 
+      this._dataReady = true;
       this.requestUpdate();
     });
 
-     // Event listener for updating the total number of users
+    // Event listener for updating the total number of users
     this.#connection.on("updateTotalUsers", (usersCount: any) => {
       console.log(usersCount);
       this._users = usersCount;
@@ -57,8 +60,6 @@ export class MyElement extends UmbElementMixin(LitElement) {
     this.#connection
       .start()
       .then(() => {
-        console.log(this.#connection.connectionId);
-
         const userData = {
           userName: this._currentUser?.name,
           connectionId: this.#connection.connectionId,
@@ -99,14 +100,18 @@ export class MyElement extends UmbElementMixin(LitElement) {
     });
   }
 
+  // Override shouldUpdate to control when to re-render
+  shouldUpdate(changedProperties: Map<PropertyKey, unknown>): boolean {
+    // Only re-render when data is ready
+    return super.shouldUpdate(changedProperties) && this._dataReady;
+  }
+
   // Render method for displaying the user count and creating a clickable container
   render() {
     return html`
-      <a
-        class="circle-container"
-        @click=${this._handleClick}
-      >
+      <a class="circle-container" @click=${this._handleClick}>
         <p>${this._users}</p>
+        ${console.log(this._connectedUserNames)}
       </a>
     `;
   }
@@ -117,17 +122,18 @@ export class MyElement extends UmbElementMixin(LitElement) {
       this.#popover.remove();
       this.#popover = null;
     } else {
+      // Create instances of popover and user card
 
-       // Create instances of popover and user card
-      const popover = new MyPopover();
+      console.log(this._connectedUserNames);
+      const popover = new PopoverElement(this._connectedUserNames);
       const userCard = new UserCard();
-  
+
       // Append the user card to the popover's shadow root
       popover.shadowRoot?.appendChild(userCard);
 
       // Append the popover to the current element's shadow root
       this.shadowRoot?.appendChild(popover);
-  
+
       this.#popover = popover;
     }
   }
@@ -159,13 +165,14 @@ export class MyElement extends UmbElementMixin(LitElement) {
       width: calc(2em + 4px);
       height: calc(2em + 4px);
       border-radius: 50%;
-      background-color: #FFFFFF;
+      color: black;
+      background-color: #ffffff;
       transition: background-color 0.3s ease;
     }
-    
+
     .circle-container:hover {
-      background-color: #6C6B6A;
-      color: #FFFFFF
+      background-color: #6c6b6a;
+      color: #ffffff;
     }
 
     .card {
@@ -192,7 +199,7 @@ export class MyElement extends UmbElementMixin(LitElement) {
 
     p {
       margin: 0;
-      color: #fffff;
+      color: #ffffff;
       text-decoration: inherit;
     }
 
@@ -226,9 +233,9 @@ export class MyElement extends UmbElementMixin(LitElement) {
   `;
 }
 
-// Define custom elements for TypeScript when used in HTML. 
+// Define custom elements for TypeScript when used in HTML.
 declare global {
   interface HTMLElementTagNameMap {
-    "my-element": MyElement;
+    "concurrency-element": ConcurrencyElement;
   }
 }

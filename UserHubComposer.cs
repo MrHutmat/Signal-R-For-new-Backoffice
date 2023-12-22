@@ -18,7 +18,7 @@ namespace SignalRProjectSite
             builder.Services.AddSignalR();
 
             // Add a singleton instance (one instance shared across the application) of the UserHubRoutes class to the services
-            builder.Services.AddSingleton<UserHubRoutes>();
+            builder.Services.AddSingleton<UserHubRoute>();
 
             // Configure Umbraco pipeline options, specifically adding a filter for the "User" pipeline
             builder.Services.Configure<UmbracoPipelineOptions>(options =>
@@ -28,8 +28,8 @@ namespace SignalRProjectSite
                     // Define endpoints for the "User" pipeline
                     Endpoints = app => app.UseEndpoints(endpoints =>
                     {
-                        // Retrieve the UserHubRoutes service
-                        var hubRoutes = app.ApplicationServices.GetRequiredService<UserHubRoutes>();
+                        // Retrieve the UserHubRoute service
+                        var hubRoutes = app.ApplicationServices.GetRequiredService<UserHubRoute>();
 
                         // Call the CreateRoutes method to add routes for the UserHub
                         hubRoutes.CreateRoutes(endpoints);
