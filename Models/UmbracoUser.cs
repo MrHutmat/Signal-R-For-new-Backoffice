@@ -8,5 +8,6 @@ public class UmbracoUser
     // Property to store the name of the user
     public string? Name { get; set; }
 
+    // Property to store recent activity DateTime
     public string? LastSeen { get; set; }
 }

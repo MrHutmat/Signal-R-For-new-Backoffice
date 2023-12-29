@@ -36,11 +36,11 @@ export class PopoverElement extends LitElement {
       background-color: white;
       border: 0.1px solid grey;
       padding: 10px;
-      color: black;
       z-index: 1000;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1),
         -4px 4px 8px rgba(0, 0, 0, 0.1);
       border-radius: 5px;
+      color: black;
     }
 
     .popover::before {

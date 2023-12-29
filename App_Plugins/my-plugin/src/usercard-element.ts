@@ -3,14 +3,17 @@ import { customElement } from "lit/decorators.js";
 
 @customElement("usercard-element")
 export class UserCard extends LitElement {
-  // Render method for displaying the user card component
 
+    // Array to store connected users
   _connectedUsersFromPopover: any;
 
+
+  // Function to generate a random color for "profile picture"
   getRandomColor() {
     return "#" + Math.floor(Math.random() * 16777215).toString(16);
   }
 
+  // Render method to generate user cards based on connected users, repeated/mapped for each user in array
   render() {
     return html` ${console.log(this._connectedUsersFromPopover)}
     ${this._connectedUsersFromPopover

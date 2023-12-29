@@ -11,6 +11,7 @@ export class ConcurrencyElement extends UmbElementMixin(LitElement) {
   @state()
   _users = 0;
 
+  // State variable to trigger re-render when data is ready
   @state()
   private _dataReady = false;
 
@@ -40,18 +41,13 @@ export class ConcurrencyElement extends UmbElementMixin(LitElement) {
 
     // Event listener for updating the list of connected users
     this.#connection.on("updateConnectedUsers", (userNames: any) => {
-      console.log(userNames);
-
       this._connectedUserNames = userNames;
-      console.log(this._connectedUserNames);
-
       this._dataReady = true;
       this.requestUpdate();
     });
 
     // Event listener for updating the total number of users
     this.#connection.on("updateTotalUsers", (usersCount: any) => {
-      console.log(usersCount);
       this._users = usersCount;
       this.requestUpdate();
     });
@@ -65,8 +61,6 @@ export class ConcurrencyElement extends UmbElementMixin(LitElement) {
           connectionId: this.#connection.connectionId,
         };
 
-        console.info("signalR connection established");
-
         // Invoke the 'ConnectUser' method on the SignalR connection
         this.#connection
           .invoke("ConnectUser", userData.userName, userData.connectionId)
@@ -76,8 +70,6 @@ export class ConcurrencyElement extends UmbElementMixin(LitElement) {
               err.toString()
             );
           });
-
-        console.log(this._connectedUserNames);
       })
       .catch((err: any) => {
         return console.error(
@@ -111,7 +103,6 @@ export class ConcurrencyElement extends UmbElementMixin(LitElement) {
     return html`
       <a class="circle-container" @click=${this._handleClick}>
         <p>${this._users}</p>
-        ${console.log(this._connectedUserNames)}
       </a>
     `;
   }
@@ -123,8 +114,6 @@ export class ConcurrencyElement extends UmbElementMixin(LitElement) {
       this.#popover = null;
     } else {
       // Create instances of popover and user card
-
-      console.log(this._connectedUserNames);
       const popover = new PopoverElement(this._connectedUserNames);
       const userCard = new UserCard();
 
@@ -173,6 +162,7 @@ export class ConcurrencyElement extends UmbElementMixin(LitElement) {
     .circle-container:hover {
       background-color: #6c6b6a;
       color: #ffffff;
+      transition: background-color 0.3s ease;
     }
 
     .card {
@@ -199,7 +189,6 @@ export class ConcurrencyElement extends UmbElementMixin(LitElement) {
 
     p {
       margin: 0;
-      color: #ffffff;
       text-decoration: inherit;
     }
 
