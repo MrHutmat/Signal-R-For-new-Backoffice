@@ -7,9 +7,7 @@ export class PopoverElement extends LitElement {
 
   constructor(usersOnline: any) {
     super();
-    console.log(usersOnline);
     this._connectedUsersFromMain = usersOnline;
-    console.log(usersOnline);
   }
 
   // Render method for displaying the popover with a user card element

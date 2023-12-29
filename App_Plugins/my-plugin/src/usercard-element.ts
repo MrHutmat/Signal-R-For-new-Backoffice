@@ -15,11 +15,10 @@ export class UserCard extends LitElement {
 
   // Render method to generate user cards based on connected users, repeated/mapped for each user in array
   render() {
-    return html` ${console.log(this._connectedUsersFromPopover)}
+    return html`
     ${this._connectedUsersFromPopover
       ? this._connectedUsersFromPopover.map(
           (user: any) => html`
-            ${console.log(user)}
             <div class="user-card">
               <div
                 class="profile-picture"
