@@ -38,7 +38,7 @@ For at køre denne applikation kræves følgende software og trin:
    - Åbn terminalen og naviger til `/App_plugin/my_plugin`.
      ```bash
      npm install --force
-     npm run build
+     npm run dev
      ```
 
 9. **Start Dotnet Applikation:**
